@@ -1,21 +1,18 @@
-// console.log('hi, test in Dev mode');
 const contacts = require('./contacts/index');
 const { program } = require('commander');
-
-// contacts
-//   .listContacts()
-//   .then((contact) => console.log(contact))
-//   .catch((err) => console.log(err));
 
 async function invokeAction({ action, id, name, email, phone }) {
   switch (action) {
     case 'list': {
       const allContacts = await contacts.listContacts();
-      console.log(allContacts);
+      console.table(allContacts);
       return;
     }
     case 'get':
       const contact = await contacts.getContactById(id);
+      if (contact === undefined) {
+        console.log(null);
+      }
       console.log(contact);
       break;
     case 'add':
@@ -23,7 +20,11 @@ async function invokeAction({ action, id, name, email, phone }) {
       console.log(newContact);
       break;
     case 'remove':
-      const removedContacts = await contacts.removeContact(id);
+      const removedContact = await contacts.removeContact(id);
+      if (removedContact === undefined) {
+        console.log(null);
+      }
+      console.log(removedContact);
       break;
     case 'update':
       const updatedContact = await contacts.updateContact(id, name, email, phone);
@@ -33,10 +34,6 @@ async function invokeAction({ action, id, name, email, phone }) {
       console.warn('unknown action ' + action);
   }
 }
-
-// invokeAction({ action: 'updateContact', id: 'rsKkOQUi80UsgVPCcLZZW', name: 'Howard', email: 'Donec.@sceler.net', phone: '(000) 206-2688' }).then(console.log).catch(console.error);
-
-// console.log(process.argv);
 
 program
   .option('-a, --action <type>', 'choose action to invoke')
